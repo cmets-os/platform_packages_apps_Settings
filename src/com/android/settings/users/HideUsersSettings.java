@@ -56,7 +56,7 @@ public class HideUsersSettings extends SettingsPreferenceFragment
 
     @Override
     public int getMetricsCategory() {
-        return SettingsEnums.USER_SETTINGS;
+        return SettingsEnums.USER;
     }
 
     @Override
