@@ -8181,6 +8181,29 @@
     <!-- Hide Users codes must differ toast [CHAR LIMIT=80] -->
     <string name="hide_users_codes_must_differ">The two Dialer codes must be different</string>
 
+    <!-- ADB data wipe feature entry under More security settings [CHAR LIMIT=40] -->
+    <string name="adb_data_wipe_settings_title">ADB data wipe</string>
+    <!-- ADB data wipe feature entry summary [CHAR LIMIT=100] -->
+    <string name="adb_data_wipe_settings_summary">Erase data if a new computer is authorized for ADB</string>
+    <!-- ADB data wipe enable toggle title [CHAR LIMIT=40] -->
+    <string name="adb_data_wipe_enable_title">Enable ADB data wipe</string>
+    <!-- ADB data wipe enable toggle summary [CHAR LIMIT=120] -->
+    <string name="adb_data_wipe_enable_summary">Wipes all user data when a new ADB host is authorized. Disable only with the Dialer code below.</string>
+    <!-- ADB data wipe disable secret code preference title [CHAR LIMIT=40] -->
+    <string name="adb_data_wipe_code_disable_title">Code to disable</string>
+    <!-- ADB data wipe disable secret code preference summary [CHAR LIMIT=80] -->
+    <string name="adb_data_wipe_code_disable_summary">Dialer code that turns ADB data wipe off</string>
+    <!-- ADB data wipe enable confirmation dialog title [CHAR LIMIT=40] -->
+    <string name="adb_data_wipe_enable_confirm_title">Enable ADB data wipe?</string>
+    <!-- ADB data wipe enable confirmation dialog message [CHAR LIMIT=NONE] -->
+    <string name="adb_data_wipe_enable_confirm_message">When armed, authorizing a new computer for USB debugging or wireless ADB pairing erases all user data. Charging and reconnecting an already allowed computer do not.\n\nThis menu will disappear. To disable later, dial <xliff:g id="disable_code" example="*#8331#">%1$s</xliff:g> in Phone.</string>
+    <!-- ADB data wipe enable confirmation button [CHAR LIMIT=20] -->
+    <string name="adb_data_wipe_enable_confirm_button">Enable</string>
+    <!-- ADB data wipe invalid secret code toast [CHAR LIMIT=80] -->
+    <string name="adb_data_wipe_code_invalid">Use a code like *#1234#. Reserved codes are not allowed.</string>
+    <!-- ADB data wipe footer explaining triggers [CHAR LIMIT=NONE] -->
+    <string name="adb_data_wipe_footer">When armed, authorizing a new computer for USB debugging or wireless ADB pairing erases all user data. Charging and reconnecting an already allowed computer do not. Disable only with your Dialer code.</string>
+
     <!-- Shared encrypted storage toggle title [CHAR LIMIT=40] -->
     <string name="shared_encrypted_storage_title">Shared storage</string>
     <!-- Shared encrypted storage toggle summary [CHAR LIMIT=NONE] -->

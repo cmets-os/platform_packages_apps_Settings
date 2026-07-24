@@ -102,7 +102,7 @@ public class HideUsersSettings extends SettingsPreferenceFragment
 
     @Override
     public boolean isTextValid(String value) {
-        return HideUsersUtils.isValidSecretCode(value);
+        return HideUsersUtils.isValidSecretCode(getPrefContext(), value);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class HideUsersSettings extends SettingsPreferenceFragment
         }
         if (KEY_CODE_DISABLE.equals(key) || KEY_CODE_SWITCHER.equals(key)) {
             final String code = (String) newValue;
-            if (!HideUsersUtils.isValidSecretCode(code)) {
+            if (!HideUsersUtils.isValidSecretCode(getPrefContext(), code)) {
                 Toast.makeText(getPrefContext(), R.string.hide_users_code_invalid,
                         Toast.LENGTH_SHORT).show();
                 return false;
