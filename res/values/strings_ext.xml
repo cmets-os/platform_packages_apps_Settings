@@ -282,6 +282,7 @@ Duress PIN works the same way duress password does."</string>
     <string name="integrity_spoof_keybox_imported">Keybox imported</string>
     <string name="integrity_spoof_keybox_invalid">Keybox rejected (corrupt or incomplete). Previous keybox kept if any.</string>
     <string name="integrity_spoof_props_imported">Props imported</string>
+    <string name="integrity_spoof_props_imported_fp">Props imported (SHA-256: <xliff:g id="sha256" example="a1b2…">%1$s</xliff:g>)</string>
     <string name="integrity_spoof_props_invalid">Props JSON rejected</string>
     <string name="integrity_spoof_props_url_invalid">Set a valid HTTPS URL first</string>
     <string name="integrity_spoof_telephony_saved">Telephony defaults saved</string>

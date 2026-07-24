@@ -16,6 +16,7 @@
 
 package com.android.settings.security;
 
+import android.annotation.NonNull;
 import android.app.settings.SettingsEnums;
 import android.content.Context;
 import android.net.Uri;
@@ -38,6 +39,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.concurrent.Executors;
@@ -262,7 +264,9 @@ public class IntegritySpoofSettings extends SettingsPreferenceFragment
                 conn.setReadTimeout(15000);
                 conn.setInstanceFollowRedirects(false);
                 try (InputStream in = conn.getInputStream()) {
-                    final String json = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+                    final byte[] bytes = in.readAllBytes();
+                    final String json = new String(bytes, StandardCharsets.UTF_8);
+                    final String sha256 = sha256Hex(bytes);
                     final boolean ok = IntegritySpoofStore.importPropsJson(appCtx, json);
                     final var activity = getActivity();
                     if (activity == null) {
@@ -273,8 +277,10 @@ public class IntegritySpoofSettings extends SettingsPreferenceFragment
                             return;
                         }
                         if (ok) {
-                            Toast.makeText(appCtx, R.string.integrity_spoof_props_imported,
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(appCtx,
+                                    appCtx.getString(R.string.integrity_spoof_props_imported_fp,
+                                            sha256),
+                                    Toast.LENGTH_LONG).show();
                             refresh();
                         } else {
                             Toast.makeText(appCtx, R.string.integrity_spoof_props_invalid,
@@ -327,5 +333,20 @@ public class IntegritySpoofSettings extends SettingsPreferenceFragment
     private void toastError() {
         Toast.makeText(getPrefContext(), R.string.integrity_spoof_import_failed, Toast.LENGTH_LONG)
                 .show();
+    }
+
+    @NonNull
+    private static String sha256Hex(@NonNull byte[] bytes) {
+        try {
+            final MessageDigest md = MessageDigest.getInstance("SHA-256");
+            final byte[] dig = md.digest(bytes);
+            final StringBuilder sb = new StringBuilder(dig.length * 2);
+            for (byte b : dig) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            return "";
+        }
     }
 }
