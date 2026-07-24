@@ -8154,6 +8154,33 @@
     <!-- User settings screen title [CHAR LIMIT=40] -->
     <string name="user_settings_title">Users</string>
 
+    <!-- Hide Users feature entry under Multiple users [CHAR LIMIT=40] -->
+    <string name="hide_users_settings_title">Hide users</string>
+    <!-- Hide Users feature entry summary [CHAR LIMIT=100] -->
+    <string name="hide_users_settings_summary">Hide other users from the user list and switcher</string>
+    <!-- Hide Users enable toggle title [CHAR LIMIT=40] -->
+    <string name="hide_users_enable_title">Hide existing users</string>
+    <!-- Hide Users enable toggle summary [CHAR LIMIT=120] -->
+    <string name="hide_users_enable_summary">Hides other full users. Guest stays visible. Recover only with Dialer codes below.</string>
+    <!-- Hide Users disable secret code preference title [CHAR LIMIT=40] -->
+    <string name="hide_users_code_disable_title">Code to show users</string>
+    <!-- Hide Users disable secret code preference summary [CHAR LIMIT=80] -->
+    <string name="hide_users_code_disable_summary">Dialer code that turns Hide users off</string>
+    <!-- Hide Users switcher secret code preference title [CHAR LIMIT=40] -->
+    <string name="hide_users_code_switcher_title">Code to open switcher</string>
+    <!-- Hide Users switcher secret code preference summary [CHAR LIMIT=80] -->
+    <string name="hide_users_code_switcher_summary">Dialer code that shows the user switcher while hide stays on</string>
+    <!-- Hide Users enable confirmation dialog title [CHAR LIMIT=40] -->
+    <string name="hide_users_enable_confirm_title">Hide users?</string>
+    <!-- Hide Users enable confirmation dialog message [CHAR LIMIT=NONE] -->
+    <string name="hide_users_enable_confirm_message">Other full users will disappear from Settings and the switcher. Guest and new users stay visible.\n\nTo show hidden users again, dial <xliff:g id="disable_code" example="*#8321#">%1$s</xliff:g> in Phone.\nTo open the switcher without disabling, dial <xliff:g id="switcher_code" example="*#8322#">%2$s</xliff:g>.</string>
+    <!-- Hide Users enable confirmation button [CHAR LIMIT=20] -->
+    <string name="hide_users_enable_confirm_button">Hide</string>
+    <!-- Hide Users invalid secret code toast [CHAR LIMIT=80] -->
+    <string name="hide_users_code_invalid">Use a code like *#1234#. Reserved codes are not allowed.</string>
+    <!-- Hide Users codes must differ toast [CHAR LIMIT=80] -->
+    <string name="hide_users_codes_must_differ">The two Dialer codes must be different</string>
+
     <!-- User settings header for list of users and profiles [CHAR LIMIT=40] -->
     <string name="user_list_title">Users &amp; profiles</string>
     <!-- User settings add user or restricted profile menu [CHAR LIMIT=35] -->

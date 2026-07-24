@@ -48,9 +48,11 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.multiuser.Flags;
 import android.net.Uri;
+import android.database.ContentObserver;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.Process;
 import android.os.RemoteException;
@@ -96,6 +98,7 @@ import com.android.settingslib.search.SearchIndexableRaw;
 import com.android.settingslib.users.CreateUserActivity;
 import com.android.settingslib.users.CreateUserDialogController;
 import com.android.settingslib.users.EditUserInfoController;
+import com.android.settingslib.users.HideUsersUtils;
 import com.android.settingslib.users.UserCreatingDialog;
 import com.android.settingslib.utils.ThreadUtils;
 
@@ -147,6 +150,7 @@ public class UserSettings extends SettingsPreferenceFragment
     private static final String KEY_ENABLE_GUEST_TELEPHONY = "enable_guest_calling";
     private static final String KEY_MULTIUSER_TOP_INTRO = "multiuser_top_intro";
     private static final String KEY_TIMEOUT_TO_DOCK_USER = "timeout_to_dock_user_preference";
+    private static final String KEY_HIDE_USERS = "hide_users_preference";
     private static final String KEY_GUEST_CATEGORY = "guest_category";
     private static final String KEY_GUEST_RESET = "guest_reset";
     private static final String KEY_GUEST_EXIT = "guest_exit";
@@ -260,9 +264,11 @@ public class UserSettings extends SettingsPreferenceFragment
     private SendCensoredNotificationsToCurrentUserPreferenceController mSendCensoredNotificationsToCurrentUserPreferenceController;
     private MultiUserTopIntroPreferenceController mMultiUserTopIntroPreferenceController;
     private TimeoutToDockUserPreferenceController mTimeoutToDockUserPreferenceController;
+    private HideUsersPreferenceController mHideUsersPreferenceController;
     private UserCreatingDialog mUserCreatingDialog;
     private final AtomicBoolean mGuestCreationScheduled = new AtomicBoolean();
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
+    private ContentObserver mHideUsersObserver;
 
     private CharSequence mPendingUserName;
     @Nullable
@@ -363,6 +369,9 @@ public class UserSettings extends SettingsPreferenceFragment
         mTimeoutToDockUserPreferenceController = new TimeoutToDockUserPreferenceController(
                 activity, KEY_TIMEOUT_TO_DOCK_USER);
 
+        mHideUsersPreferenceController = new HideUsersPreferenceController(
+                activity, KEY_HIDE_USERS);
+
         mMainSwitchController = new MultiUserMainSwitchPreferenceController(
                 activity, KEY_USER_SWITCH_TOGGLE);
 
@@ -375,6 +384,7 @@ public class UserSettings extends SettingsPreferenceFragment
         mSendCensoredNotificationsToCurrentUserPreferenceController.displayPreference(screen);
         mMultiUserTopIntroPreferenceController.displayPreference(screen);
         mTimeoutToDockUserPreferenceController.displayPreference(screen);
+        mHideUsersPreferenceController.displayPreference(screen);
         mMainSwitchController.displayPreference(screen);
 
 
@@ -452,6 +462,18 @@ public class UserSettings extends SettingsPreferenceFragment
                 mUserChangeReceiver, UserHandle.ALL, USER_REMOVED_INTENT_FILTER, null, mHandler,
                 Context.RECEIVER_EXPORTED_UNAUDITED);
 
+        mHideUsersObserver = new ContentObserver(new Handler(Looper.getMainLooper())) {
+            @Override
+            public void onChange(boolean selfChange) {
+                HideUsersSettings.clearAppListCaches(activity.getApplicationContext());
+                updateUI();
+            }
+        };
+        activity.getContentResolver().registerContentObserver(
+                Settings.Global.getUriFor(Settings.Global.HIDE_USERS),
+                false /* notifyForDescendants */,
+                mHideUsersObserver);
+
         updateUI();
         mShouldUpdateUserList = false;
     }
@@ -475,6 +497,8 @@ public class UserSettings extends SettingsPreferenceFragment
                 mGuestTelephonyPreferenceController.getPreferenceKey()));
         mTimeoutToDockUserPreferenceController.updateState(screen.findPreference(
                 mTimeoutToDockUserPreferenceController.getPreferenceKey()));
+        mHideUsersPreferenceController.updateState(screen.findPreference(
+                mHideUsersPreferenceController.getPreferenceKey()));
         mRemoveGuestOnExitPreferenceController.updateState(screen.findPreference(
                 mRemoveGuestOnExitPreferenceController.getPreferenceKey()));
         mMainSwitchController.updateState();
@@ -500,7 +524,14 @@ public class UserSettings extends SettingsPreferenceFragment
             return;
         }
 
-        getActivity().unregisterReceiver(mUserChangeReceiver);
+        final Activity activity = getActivity();
+        if (activity != null) {
+            activity.unregisterReceiver(mUserChangeReceiver);
+            if (mHideUsersObserver != null) {
+                activity.getContentResolver().unregisterContentObserver(mHideUsersObserver);
+                mHideUsersObserver = null;
+            }
+        }
     }
 
     @Override
@@ -1346,9 +1377,11 @@ public class UserSettings extends SettingsPreferenceFragment
         List<UserInfo> users;
         // Only human users that can be UI-switched to should show up here.
         // e.g. Managed profiles appear under Accounts Settings instead
-        users = mUserManager.getAliveUsers().stream()
-                .filter(UserInfo::isUiSwitchableHumanUser)
-                .collect(Collectors.toList());
+        // Snapshot-hidden users (Hide Users) are omitted; guest / post-enable users stay.
+        users = HideUsersUtils.filterUiUsers(
+                mUserManager.getAliveUsers().stream()
+                        .filter(UserInfo::isUiSwitchableHumanUser)
+                        .collect(Collectors.toList()));
 
         final ArrayList<Integer> missingIcons = new ArrayList<>();
         final ArrayList<UserPreference> userPreferences = new ArrayList<>();
@@ -1476,6 +1509,11 @@ public class UserSettings extends SettingsPreferenceFragment
         final Preference multiUserTopIntroPreference = getPreferenceScreen().findPreference(
                 mMultiUserTopIntroPreferenceController.getPreferenceKey());
         mMultiUserTopIntroPreferenceController.updateState(multiUserTopIntroPreference);
+
+        final Preference hideUsersPreference = getPreferenceScreen().findPreference(
+                mHideUsersPreferenceController.getPreferenceKey());
+        mHideUsersPreferenceController.updateState(hideUsersPreference);
+
         updateGuestPreferences();
         updateGuestCategory(context, users);
         updateAddUser(context);
@@ -1804,7 +1842,7 @@ public class UserSettings extends SettingsPreferenceFragment
     int getRealUsersCount() {
         return (int) mUserManager.getUsers()
                 .stream()
-                .filter(user -> !user.isGuest() && !user.isProfile())
+                .filter(user -> !user.isGuest() && !user.isProfile() && !user.isUiHidden())
                 .count();
     }
 

@@ -125,4 +125,12 @@
             android:summary="@string/user_settings_send_censored_notifications_to_current_summary"
             android:order="106"/>
 
+    <Preference
+        android:key="hide_users_preference"
+        android:title="@string/hide_users_settings_title"
+        android:summary="@string/hide_users_settings_summary"
+        android:order="107"
+        android:fragment="com.android.settings.users.HideUsersSettings"
+        settings:controller="com.android.settings.users.HideUsersPreferenceController"/>
+
 </PreferenceScreen>
