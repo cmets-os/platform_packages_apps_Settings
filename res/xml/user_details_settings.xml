@@ -45,6 +45,8 @@
             android:key="app_copying"
             android:icon="@drawable/ic_apps"
             android:title="@string/user_copy_apps_menu_title" />
+    <!-- Shared encrypted storage: immediately after app_copying (Hide Users does not
+         edit this screen; keep this order when merging feature XML). -->
     <SwitchPreferenceCompat
             android:key="shared_encrypted_storage"
             android:icon="@drawable/ic_storage"

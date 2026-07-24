@@ -160,12 +160,14 @@
         settings:keywords="@string/content_protection_preference_title"
         settings:controller="com.android.settings.security.ContentProtectionPreferenceController" />
 
+    <!-- Integrity spoof system page (per-app toggles live under App info). -->
     <Preference
         android:order="231"
         android:key="integrity_spoof_settings"
         android:title="@string/integrity_spoof_settings_title"
         android:summary="@string/integrity_spoof_settings_summary"
-        android:fragment="com.android.settings.security.IntegritySpoofSettings" />
+        android:fragment="com.android.settings.security.IntegritySpoofSettings"
+        settings:controller="com.android.settings.security.IntegritySpoofPreferenceController" />
 
     <Preference
         android:order="241"

@@ -79,8 +79,10 @@
             settings:fragment="com.android.settings.users.AppCopyFragment"
             settings:searchable="false" />
 
+        <!-- Shared encrypted storage: immediately after private_space_ext_app_copying. -->
         <SwitchPreferenceCompat
             android:key="private_space_shared_encrypted_storage"
+            android:icon="@drawable/ic_storage"
             android:title="@string/shared_encrypted_storage_title"
             android:summary="@string/shared_encrypted_storage_summary"
             settings:controller="com.android.settings.privatespace.users.PsSharedEncryptedStoragePrefController"

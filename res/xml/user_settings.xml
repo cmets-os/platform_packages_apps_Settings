@@ -125,6 +125,8 @@
             android:summary="@string/user_settings_send_censored_notifications_to_current_summary"
             android:order="106"/>
 
+    <!-- Hide Users management (self-hides when armed). Dialer codes must stay
+         distinct from ADB data wipe (*#8331#) via HideUsersUtils validators. -->
     <Preference
         android:key="hide_users_preference"
         android:title="@string/hide_users_settings_title"

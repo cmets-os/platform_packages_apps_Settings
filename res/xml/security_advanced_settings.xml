@@ -113,6 +113,7 @@
         settings:keywords="@string/keywords_app_pinning"
         settings:controller="com.android.settings.security.ScreenPinningPreferenceController" />
 
+    <!-- Mirrored in more_security_privacy_settings.xml for Safety Center path. -->
     <Preference
         android:order="285"
         android:key="adb_data_wipe_preference"
@@ -121,7 +122,7 @@
         android:fragment="com.android.settings.security.AdbDataWipeSettings"
         settings:controller="com.android.settings.security.AdbDataWipePreferenceController"/>
 
-  <com.android.settingslib.RestrictedPreference
+    <com.android.settingslib.RestrictedPreference
         android:order="300"
         android:id="@+id/memtag_page"
         android:key="memtag_page"
