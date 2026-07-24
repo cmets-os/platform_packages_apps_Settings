@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2026 cmets-os
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:settings="http://schemas.android.com/apk/res-auto"
+    android:key="integrity_spoof_settings_screen"
+    android:title="@string/integrity_spoof_settings_title">
+
+    <Preference
+        android:key="integrity_spoof_status"
+        android:title="@string/integrity_spoof_status_title"
+        android:selectable="false"/>
+
+    <Preference
+        android:key="integrity_spoof_import_keybox"
+        android:title="@string/integrity_spoof_import_keybox_title"
+        android:summary="@string/integrity_spoof_import_keybox_summary"/>
+
+    <Preference
+        android:key="integrity_spoof_import_props"
+        android:title="@string/integrity_spoof_import_props_title"
+        android:summary="@string/integrity_spoof_import_props_summary"/>
+
+    <EditTextPreference
+        android:key="integrity_spoof_props_url"
+        android:title="@string/integrity_spoof_props_url_title"
+        android:summary="@string/integrity_spoof_props_url_summary"
+        android:dialogTitle="@string/integrity_spoof_props_url_title"/>
+
+    <Preference
+        android:key="integrity_spoof_update_props_url"
+        android:title="@string/integrity_spoof_update_props_url_title"
+        android:summary="@string/integrity_spoof_update_props_url_summary"/>
+
+    <EditTextPreference
+        android:key="integrity_spoof_telephony_mcc"
+        android:title="@string/integrity_spoof_telephony_mcc_title"
+        android:dialogTitle="@string/integrity_spoof_telephony_mcc_title"/>
+
+    <EditTextPreference
+        android:key="integrity_spoof_telephony_mnc"
+        android:title="@string/integrity_spoof_telephony_mnc_title"
+        android:dialogTitle="@string/integrity_spoof_telephony_mnc_title"/>
+
+    <EditTextPreference
+        android:key="integrity_spoof_telephony_iso"
+        android:title="@string/integrity_spoof_telephony_iso_title"
+        android:dialogTitle="@string/integrity_spoof_telephony_iso_title"/>
+
+    <EditTextPreference
+        android:key="integrity_spoof_telephony_name"
+        android:title="@string/integrity_spoof_telephony_name_title"
+        android:dialogTitle="@string/integrity_spoof_telephony_name_title"/>
+
+    <Preference
+        android:key="integrity_spoof_save_telephony"
+        android:title="@string/integrity_spoof_save_telephony_title"
+        android:summary="@string/integrity_spoof_save_telephony_summary"/>
+
+    <Preference
+        android:key="integrity_spoof_apply"
+        android:title="@string/integrity_spoof_apply_title"
+        android:summary="@string/integrity_spoof_apply_summary"/>
+
+    <com.android.settingslib.widget.FooterPreference
+        android:key="integrity_spoof_footer"
+        android:title="@string/integrity_spoof_footer"
+        settings:searchable="false"/>
+
+</PreferenceScreen>

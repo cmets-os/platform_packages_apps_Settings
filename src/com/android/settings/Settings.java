@@ -698,6 +698,12 @@ public class Settings extends SettingsActivity {
 
     public static class AppManagePlayIntegrityApiActivity extends SettingsActivity {}
 
+    public static class AppManageSpoofPlayIntegrityActivity extends SettingsActivity {}
+
+    public static class AppManageSpoofTelephonyRegionActivity extends SettingsActivity {}
+
+    public static class IntegritySpoofSettingsActivity extends SettingsActivity {}
+
     public static class ExploitProtectionActivity extends SettingsActivity {}
 
     public static class NotificationBundlesActivity extends SettingsActivity { /* empty */ }

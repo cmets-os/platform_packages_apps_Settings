@@ -237,6 +237,58 @@ Duress PIN works the same way duress password does."</string>
     <string name="app_play_integrity_api_not_blocked">Not blocked</string>
     <string name="app_play_integrity_see_all_apps">Show apps that used the Play Integrity API</string>
 
+    <string name="app_spoof_play_integrity">Spoof Play Integrity</string>
+    <string name="app_spoof_play_integrity_on">On</string>
+    <string name="app_spoof_play_integrity_off">Off</string>
+    <string name="app_spoof_play_integrity_switch">Spoof Play Integrity for this app</string>
+    <string name="app_spoof_play_integrity_switch_summary">Apply imported Build props and keybox attestation for this app. GMS and Play Store are included automatically while any app has this enabled. Block Play Integrity wins over spoof.</string>
+    <string name="app_spoof_play_integrity_footer">Private-fork feature. Props help BASIC; DEVICE/STRONG need an unrevoked user-imported keybox. No guarantees. Configure keybox and props under More security and privacy → Integrity spoof.</string>
+    <string name="app_spoof_play_integrity_see_all_apps">Show all apps for Spoof Play Integrity</string>
+
+    <string name="app_spoof_telephony_region">Spoof telephony region</string>
+    <string name="app_spoof_telephony_region_on">On</string>
+    <string name="app_spoof_telephony_region_off">Off</string>
+    <string name="app_spoof_telephony_region_switch">Spoof SIM/network region for this app</string>
+    <string name="app_spoof_telephony_region_switch_summary">Return configured MCC/MNC/ISO values from Integrity spoof settings. GMS and Play Store are included automatically while any app has this enabled. Does not change Play Store country or IP geolocation.</string>
+    <string name="app_spoof_telephony_region_footer">Spoofing telephony APIs does not fully change Google Play country. Account payment profile and IP still matter.</string>
+    <string name="app_spoof_telephony_region_see_all_apps">Show all apps for Spoof telephony region</string>
+
+    <string name="integrity_spoof_settings_title">Integrity spoof</string>
+    <string name="integrity_spoof_settings_summary">Import keybox and props; edit telephony defaults</string>
+    <string name="integrity_spoof_status_title">Status</string>
+    <string name="integrity_spoof_status_summary">Keybox: %1$s\nAny app PI spoof: %2$s\nAny app telephony spoof: %3$s\nLast apply: %4$s</string>
+    <string name="integrity_spoof_keybox_present">present</string>
+    <string name="integrity_spoof_keybox_missing">missing</string>
+    <string name="integrity_spoof_yes">yes</string>
+    <string name="integrity_spoof_no">no</string>
+    <string name="integrity_spoof_never_applied">never</string>
+    <string name="integrity_spoof_import_keybox_title">Import keybox</string>
+    <string name="integrity_spoof_import_keybox_summary">Load a TrickyStore-style keybox.xml (user-supplied only)</string>
+    <string name="integrity_spoof_import_props_title">Import props JSON</string>
+    <string name="integrity_spoof_import_props_summary">Load PIF-compatible fingerprint fields</string>
+    <string name="integrity_spoof_props_url_title">Props update URL</string>
+    <string name="integrity_spoof_props_url_summary">HTTPS URL for manual props.json update</string>
+    <string name="integrity_spoof_update_props_url_title">Update props from URL</string>
+    <string name="integrity_spoof_update_props_url_summary">Download props.json over HTTPS (no automatic polling)</string>
+    <string name="integrity_spoof_telephony_mcc_title">Telephony MCC</string>
+    <string name="integrity_spoof_telephony_mnc_title">Telephony MNC</string>
+    <string name="integrity_spoof_telephony_iso_title">Telephony country ISO</string>
+    <string name="integrity_spoof_telephony_name_title">Operator name</string>
+    <string name="integrity_spoof_save_telephony_title">Save telephony defaults</string>
+    <string name="integrity_spoof_save_telephony_summary">Write MCC/MNC/ISO/name to telephony.json</string>
+    <string name="integrity_spoof_apply_title">Apply now</string>
+    <string name="integrity_spoof_apply_summary">Reload store and force-stop GMS and Play Store</string>
+    <string name="integrity_spoof_apply_done">Integrity spoof applied</string>
+    <string name="integrity_spoof_keybox_imported">Keybox imported</string>
+    <string name="integrity_spoof_keybox_invalid">Keybox rejected (corrupt or incomplete). Previous keybox kept if any.</string>
+    <string name="integrity_spoof_props_imported">Props imported</string>
+    <string name="integrity_spoof_props_invalid">Props JSON rejected</string>
+    <string name="integrity_spoof_props_url_invalid">Set a valid HTTPS URL first</string>
+    <string name="integrity_spoof_telephony_saved">Telephony defaults saved</string>
+    <string name="integrity_spoof_telephony_invalid">MCC, MNC, and country ISO are required</string>
+    <string name="integrity_spoof_import_failed">Import failed</string>
+    <string name="integrity_spoof_footer">Private-fork feature. Never ships OEM keyboxes. Props help BASIC; DEVICE/STRONG need an unrevoked imported keybox. No guarantees. Keyboxes can be revoked by Google at any time. Telephony spoof does not change Play country or defeat IP geolocation.</string>
+
     <string name="network_location_title">Network location</string>
     <string name="network_location_footer">
 "Network location is a method of determining your device’s location by using various nearby signals, such as Wi-Fi networks, Bluetooth devices, and cell towers. Your device scans for these signals and sends their identifiers to a server, which then provides positioning data that your device uses to estimate its location. Currently, Wi-Fi networks and cell towers are used.

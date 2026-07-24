@@ -161,6 +161,13 @@
         settings:controller="com.android.settings.security.ContentProtectionPreferenceController" />
 
     <Preference
+        android:order="231"
+        android:key="integrity_spoof_settings"
+        android:title="@string/integrity_spoof_settings_title"
+        android:summary="@string/integrity_spoof_settings_summary"
+        android:fragment="com.android.settings.security.IntegritySpoofSettings" />
+
+    <Preference
         android:order="241"
         android:key="manage_device_admin"
         android:title="@string/manage_device_admin"
