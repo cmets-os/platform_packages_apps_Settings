@@ -509,10 +509,8 @@ public class UserDetailsSettings extends SettingsPreferenceFragment
             removePreference(KEY_APP_COPYING);
             removePreference(KEY_APP_INSTALLS);
             removePreference(KEY_RUN_IN_BACKGROUND);
-            // Non-admin users may still toggle Shared for themselves.
-            if (mUserInfo.id != UserHandle.myUserId()) {
-                removePreference(KEY_SHARED_ENCRYPTED_STORAGE);
-            }
+            // Shared opt-in for secondary users requires MANAGE_USERS (admin/owner).
+            removePreference(KEY_SHARED_ENCRYPTED_STORAGE);
         } else {
             if (!Utils.isVoiceCapable(context)) { // no telephony
                 removePreference(KEY_ENABLE_TELEPHONY_CALLING);
