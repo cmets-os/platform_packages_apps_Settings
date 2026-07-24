@@ -8181,6 +8181,31 @@
     <!-- Hide Users codes must differ toast [CHAR LIMIT=80] -->
     <string name="hide_users_codes_must_differ">The two Dialer codes must be different</string>
 
+    <!-- Shared encrypted storage toggle title [CHAR LIMIT=40] -->
+    <string name="shared_encrypted_storage_title">Shared storage</string>
+    <!-- Shared encrypted storage toggle summary [CHAR LIMIT=NONE] -->
+    <string name="shared_encrypted_storage_summary">Encrypted folder visible to this profile as Shared; same data for every profile that enables it</string>
+    <!-- Shared encrypted storage owner page summary [CHAR LIMIT=100] -->
+    <string name="shared_encrypted_storage_settings_summary">Manage the encrypted Shared folder across profiles</string>
+    <!-- Shared encrypted storage enable for owner [CHAR LIMIT=40] -->
+    <string name="shared_encrypted_storage_enable_title">Enable for this device</string>
+    <!-- Shared encrypted storage status title [CHAR LIMIT=40] -->
+    <string name="shared_encrypted_storage_status_title">Status</string>
+    <!-- Shared encrypted storage status: unlocked [CHAR LIMIT=60] -->
+    <string name="shared_encrypted_storage_status_unlocked">Unlocked after owner sign-in</string>
+    <!-- Shared encrypted storage status: locked [CHAR LIMIT=60] -->
+    <string name="shared_encrypted_storage_status_locked">Locked until owner unlocks the device</string>
+    <!-- Shared encrypted storage wipe title [CHAR LIMIT=40] -->
+    <string name="shared_encrypted_storage_wipe_title">Erase shared storage</string>
+    <!-- Shared encrypted storage wipe summary [CHAR LIMIT=100] -->
+    <string name="shared_encrypted_storage_wipe_summary">Permanently delete all files in Shared for every profile</string>
+    <!-- Shared encrypted storage wipe confirmation title [CHAR LIMIT=40] -->
+    <string name="shared_encrypted_storage_wipe_confirm_title">Erase shared storage?</string>
+    <!-- Shared encrypted storage wipe confirmation message [CHAR LIMIT=NONE] -->
+    <string name="shared_encrypted_storage_wipe_confirm_message">This permanently deletes all files in Shared for every profile that uses it. This cannot be undone.</string>
+    <!-- Shared encrypted storage wipe confirmation button [CHAR LIMIT=20] -->
+    <string name="shared_encrypted_storage_wipe_confirm_button">Erase</string>
+
     <!-- User settings header for list of users and profiles [CHAR LIMIT=40] -->
     <string name="user_list_title">Users &amp; profiles</string>
     <!-- User settings add user or restricted profile menu [CHAR LIMIT=35] -->

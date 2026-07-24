@@ -45,6 +45,11 @@
             android:key="app_copying"
             android:icon="@drawable/ic_apps"
             android:title="@string/user_copy_apps_menu_title" />
+    <SwitchPreferenceCompat
+            android:key="shared_encrypted_storage"
+            android:icon="@drawable/ic_storage"
+            android:title="@string/shared_encrypted_storage_title"
+            android:summary="@string/shared_encrypted_storage_summary" />
     <com.android.settingslib.RestrictedPreference
             android:key="remove_user"
             android:icon="@drawable/ic_delete"

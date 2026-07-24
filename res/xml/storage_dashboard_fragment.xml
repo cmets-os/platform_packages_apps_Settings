@@ -114,4 +114,12 @@
         android:key="pref_non_current_users"
         android:title="@string/storage_other_users"
         android:order="204" />
+    <Preference
+        android:key="shared_encrypted_storage_settings"
+        android:title="@string/shared_encrypted_storage_title"
+        android:summary="@string/shared_encrypted_storage_settings_summary"
+        android:icon="@drawable/ic_storage"
+        android:order="205"
+        android:fragment="com.android.settings.deviceinfo.storage.SharedEncryptedStorageSettings"
+        settings:controller="com.android.settings.deviceinfo.storage.SharedEncryptedStoragePreferenceController"/>
 </PreferenceScreen>

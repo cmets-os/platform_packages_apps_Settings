@@ -81,6 +81,7 @@ public class UserDetailsSettings extends SettingsPreferenceFragment
     private static final String KEY_GRANT_ADMIN = "user_grant_admin";
     private static final String KEY_APP_AND_CONTENT_ACCESS = "app_and_content_access";
     private static final String KEY_APP_COPYING = "app_copying";
+    private static final String KEY_SHARED_ENCRYPTED_STORAGE = "shared_encrypted_storage";
 
     private static final String KEY_APP_INSTALLS = "app_installs";
     private static final String KEY_RUN_IN_BACKGROUND = "allow_run_in_background";
@@ -124,6 +125,7 @@ public class UserDetailsSettings extends SettingsPreferenceFragment
     TwoStatePreference mGrantAdminPref;
     Preference mAppsInstallsPref;
     private SwitchPreferenceCompat mRunInBackgroundPref;
+    private SwitchPreferenceCompat mSharedEncryptedStoragePref;
 
     @VisibleForTesting
     /** The user being studied (not the user doing the studying). */
@@ -241,6 +243,10 @@ public class UserDetailsSettings extends SettingsPreferenceFragment
             return false;
         } else if (preference == mRunInBackgroundPref) {
             userRestrictions.set(UserManager.DISALLOW_RUN_IN_BACKGROUND, !((boolean) newValue));
+            return true;
+        } else if (preference == mSharedEncryptedStoragePref) {
+            mUserManager.setSharedEncryptedStorageEnabled(
+                    mUserInfo.id, Boolean.TRUE.equals(newValue));
             return true;
         }
 
@@ -437,6 +443,7 @@ public class UserDetailsSettings extends SettingsPreferenceFragment
         mGrantAdminPref.setChecked(mUserInfo.isAdmin());
         mAppsInstallsPref = findPreference(KEY_APP_INSTALLS);
         mRunInBackgroundPref = findPreference(KEY_RUN_IN_BACKGROUND);
+        mSharedEncryptedStoragePref = findPreference(KEY_SHARED_ENCRYPTED_STORAGE);
 
         mSwitchUserPref.setVisible(mUserCaps.mUserSwitchingUiEnabled
                 && UserHandle.myUserId() != mUserInfo.id);
@@ -489,12 +496,23 @@ public class UserDetailsSettings extends SettingsPreferenceFragment
             removePreference(KEY_REMOVE_USER);
         }
 
+        if (mUserInfo.isGuest() || mUserInfo.isMain() || mUserInfo.isRestricted()) {
+            removePreference(KEY_SHARED_ENCRYPTED_STORAGE);
+        } else if (mSharedEncryptedStoragePref != null) {
+            mSharedEncryptedStoragePref.setChecked(mUserInfo.isSharedEncryptedStorageEnabled());
+            mSharedEncryptedStoragePref.setOnPreferenceChangeListener(this);
+        }
+
         if (!mUserManager.isAdminUser()) { // not allow calls for non admin users.
             removePreference(KEY_ENABLE_TELEPHONY_CALLING);
             removePreference(KEY_APP_AND_CONTENT_ACCESS);
             removePreference(KEY_APP_COPYING);
             removePreference(KEY_APP_INSTALLS);
             removePreference(KEY_RUN_IN_BACKGROUND);
+            // Non-admin users may still toggle Shared for themselves.
+            if (mUserInfo.id != UserHandle.myUserId()) {
+                removePreference(KEY_SHARED_ENCRYPTED_STORAGE);
+            }
         } else {
             if (!Utils.isVoiceCapable(context)) { // no telephony
                 removePreference(KEY_ENABLE_TELEPHONY_CALLING);

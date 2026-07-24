@@ -80,6 +80,13 @@
             settings:searchable="false" />
 
         <SwitchPreferenceCompat
+            android:key="private_space_shared_encrypted_storage"
+            android:title="@string/shared_encrypted_storage_title"
+            android:summary="@string/shared_encrypted_storage_summary"
+            settings:controller="com.android.settings.privatespace.users.PsSharedEncryptedStoragePrefController"
+            settings:searchable="false" />
+
+        <SwitchPreferenceCompat
             android:key="private_space_disallow_delayed_locking"
             android:title="@string/ps_disallow_delayed_locking_title"
             android:summary="@string/ps_disallow_delayed_locking_description"
