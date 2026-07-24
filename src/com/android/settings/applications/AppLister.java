@@ -16,12 +16,16 @@
 
 package com.android.settings.applications;
 
+import android.app.ActivityThread;
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.UserInfo;
 import android.os.AsyncTask;
 import android.os.UserHandle;
 import android.os.UserManager;
+
+import com.android.settingslib.users.HideUsersUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,11 +48,16 @@ public abstract class AppLister extends AsyncTask<Void, Void, List<UserAppInfo>>
     @Override
     protected List<UserAppInfo> doInBackground(Void... params) {
         final List<UserAppInfo> result = new ArrayList<>();
+        final Context appContext = ActivityThread.currentApplication();
+        final boolean hideUsers =
+                appContext != null && HideUsersUtils.isFeatureEnabled(appContext);
         for (UserInfo user : mUm.getProfiles(UserHandle.myUserId())) {
+            final int matchAnyUser =
+                    (!hideUsers && user.isAdmin()) ? PackageManager.MATCH_ANY_USER : 0;
             final List<ApplicationInfo> list =
                     mPm.getInstalledApplicationsAsUser(PackageManager.GET_DISABLED_COMPONENTS
                             | PackageManager.GET_DISABLED_UNTIL_USED_COMPONENTS
-                            | (user.isAdmin() ? PackageManager.MATCH_ANY_USER : 0),
+                            | matchAnyUser,
                             user.id);
             for (ApplicationInfo info : list) {
                 if (includeInCount(info)) {

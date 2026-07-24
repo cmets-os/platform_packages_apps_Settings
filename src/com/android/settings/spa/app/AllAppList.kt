@@ -47,6 +47,7 @@ import com.android.settingslib.spaprivileged.template.app.AppListItem
 import com.android.settingslib.spaprivileged.template.app.AppListItemModel
 import com.android.settingslib.spaprivileged.template.app.AppListPage
 import com.android.settingslib.spaprivileged.template.app.getStorageSize
+import com.android.settingslib.users.HideUsersUtils
 import kotlinx.coroutines.flow.Flow
 
 object AllAppListPageProvider : SettingsPageProvider {
@@ -74,11 +75,15 @@ fun AllAppListPage(
     appList: @Composable AppListInput<AppRecordWithSize>.() -> Unit = { AppList() },
 ) {
     val resetAppDialogPresenter = rememberResetAppDialogPresenter()
+    val context = LocalContext.current
+    val matchAnyUserForAdmin =
+        !android.multiuser.Flags.dontShowOtherUsersAppsToAdmin()
+            && !HideUsersUtils.isFeatureEnabled(context)
     AppListPage(
         title = stringResource(R.string.all_apps),
         listModel = rememberContext(::AllAppListModel),
         showInstantApps = true,
-        matchAnyUserForAdmin = (!android.multiuser.Flags.dontShowOtherUsersAppsToAdmin()),
+        matchAnyUserForAdmin = matchAnyUserForAdmin,
         moreOptions = { ResetAppPreferences(resetAppDialogPresenter::open) },
         appList = appList,
     )
