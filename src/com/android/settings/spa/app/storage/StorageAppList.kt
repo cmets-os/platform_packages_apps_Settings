@@ -19,6 +19,7 @@ package com.android.settings.spa.app.storage
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.os.Bundle
+import android.provider.Settings
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -26,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.settings.R
 import com.android.settings.spa.app.appinfo.AppInfoSettingsProvider
 import com.android.settingslib.spa.framework.common.SettingsPageProvider
@@ -35,6 +37,7 @@ import com.android.settingslib.spaprivileged.model.app.AppEntry
 import com.android.settingslib.spaprivileged.model.app.AppListModel
 import com.android.settingslib.spaprivileged.model.app.AppRecord
 import com.android.settingslib.spaprivileged.model.app.AppStorageRepositoryImpl
+import com.android.settingslib.spaprivileged.settingsprovider.settingsGlobalBooleanFlow
 import com.android.settingslib.spaprivileged.template.app.AppList
 import com.android.settingslib.spaprivileged.template.app.AppListInput
 import com.android.settingslib.spaprivileged.template.app.AppListItem
@@ -85,6 +88,9 @@ fun StorageAppListPage(
     appList: @Composable AppListInput<AppRecordWithSize>.() -> Unit = { AppList() }
 ) {
     val context = LocalContext.current
+    val hideUsersArmed by context
+        .settingsGlobalBooleanFlow(Settings.Global.HIDE_USERS)
+        .collectAsStateWithLifecycle(initialValue = HideUsersUtils.isFeatureEnabled(context))
     AppListPage(
         title = stringResource(type.titleResource),
         listModel = when (type) {
@@ -92,7 +98,7 @@ fun StorageAppListPage(
             StorageType.Games -> remember(context) { StorageAppListModel(context, type) }
         },
         showInstantApps = true,
-        matchAnyUserForAdmin = !HideUsersUtils.isFeatureEnabled(context),
+        matchAnyUserForAdmin = !hideUsersArmed,
         appList = appList,
         moreOptions = {  }, // TODO(b/292165031) Sorting in Options not yet supported
     )

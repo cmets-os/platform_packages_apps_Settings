@@ -19,10 +19,13 @@ package com.android.settings.spa.app
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.os.Bundle
+import android.provider.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.settings.R
 import com.android.settings.flags.Flags
 import com.android.settings.spa.app.appinfo.AppInfoSettingsProvider
@@ -41,6 +44,7 @@ import com.android.settingslib.spaprivileged.framework.compose.getPlaceholder
 import com.android.settingslib.spaprivileged.model.app.AppListModel
 import com.android.settingslib.spaprivileged.model.app.AppRecord
 import com.android.settingslib.spaprivileged.model.app.installed
+import com.android.settingslib.spaprivileged.settingsprovider.settingsGlobalBooleanFlow
 import com.android.settingslib.spaprivileged.template.app.AppList
 import com.android.settingslib.spaprivileged.template.app.AppListInput
 import com.android.settingslib.spaprivileged.template.app.AppListItem
@@ -76,9 +80,12 @@ fun AllAppListPage(
 ) {
     val resetAppDialogPresenter = rememberResetAppDialogPresenter()
     val context = LocalContext.current
+    // Observe Global so Dialer enable/disable refreshes MATCH_ANY_USER without leaving the page.
+    val hideUsersArmed by context
+        .settingsGlobalBooleanFlow(Settings.Global.HIDE_USERS)
+        .collectAsStateWithLifecycle(initialValue = HideUsersUtils.isFeatureEnabled(context))
     val matchAnyUserForAdmin =
-        !android.multiuser.Flags.dontShowOtherUsersAppsToAdmin()
-            && !HideUsersUtils.isFeatureEnabled(context)
+        !android.multiuser.Flags.dontShowOtherUsersAppsToAdmin() && !hideUsersArmed
     AppListPage(
         title = stringResource(R.string.all_apps),
         listModel = rememberContext(::AllAppListModel),
