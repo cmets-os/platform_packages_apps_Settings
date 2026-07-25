@@ -118,8 +118,7 @@ public class IntegritySpoofSettings extends SettingsPreferenceFragment
     private void refresh() {
         final Context ctx = getPrefContext();
         IntegritySpoofStore.syncPolicy(ctx);
-        final boolean keybox = Settings.Global.getInt(ctx.getContentResolver(),
-                Settings.Global.INTEGRITY_SPOOF_KEYBOX_PRESENT, 0) == 1;
+        final String keyboxSource = IntegritySpoofStore.getKeyboxSource();
         final boolean anyPi = Settings.Global.getInt(ctx.getContentResolver(),
                 Settings.Global.INTEGRITY_SPOOF_ANY_PI, 0) == 1;
         final boolean anyTel = Settings.Global.getInt(ctx.getContentResolver(),
@@ -129,10 +128,18 @@ public class IntegritySpoofSettings extends SettingsPreferenceFragment
         final String lastReloadText = lastReload > 0
                 ? DateFormat.getDateTimeInstance().format(new Date(lastReload))
                 : ctx.getString(R.string.integrity_spoof_never_applied);
+        final String keyboxStatus;
+        if (keyboxSource == null) {
+            keyboxStatus = ctx.getString(R.string.integrity_spoof_keybox_missing);
+        } else if (IntegritySpoofStore.KEYBOX_SOURCE_DEFAULT_AOSP_SOFT.equals(keyboxSource)) {
+            keyboxStatus = ctx.getString(R.string.integrity_spoof_keybox_default_soft);
+        } else if (IntegritySpoofStore.KEYBOX_SOURCE_IMPORTED.equals(keyboxSource)) {
+            keyboxStatus = ctx.getString(R.string.integrity_spoof_keybox_status_imported);
+        } else {
+            keyboxStatus = ctx.getString(R.string.integrity_spoof_keybox_present);
+        }
         mStatusPref.setSummary(ctx.getString(R.string.integrity_spoof_status_summary,
-                keybox
-                        ? ctx.getString(R.string.integrity_spoof_keybox_present)
-                        : ctx.getString(R.string.integrity_spoof_keybox_missing),
+                keyboxStatus,
                 anyPi ? ctx.getString(R.string.integrity_spoof_yes)
                         : ctx.getString(R.string.integrity_spoof_no),
                 anyTel ? ctx.getString(R.string.integrity_spoof_yes)
