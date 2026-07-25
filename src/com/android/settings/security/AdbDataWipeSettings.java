@@ -31,7 +31,6 @@ import androidx.preference.SwitchPreferenceCompat;
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
 import com.android.settings.widget.ValidatedEditTextPreference;
-import com.android.settingslib.users.HideUsersUtils;
 
 /**
  * ADB data wipe management screen: enable toggle and editable Dialer disable code.
@@ -118,16 +117,8 @@ public class AdbDataWipeSettings extends SettingsPreferenceFragment
     }
 
     private boolean isAcceptableDisableCode(String code) {
-        if (!AdbDataWipeUtils.isValidSecretCode(code)) {
-            return false;
-        }
-        final Context context = getPrefContext();
-        // Reject currently configured Hide Users codes (not only their defaults).
-        if (code.equals(HideUsersUtils.getDisableCode(context))
-                || code.equals(HideUsersUtils.getSwitcherCode(context))) {
-            return false;
-        }
-        return true;
+        // Format + currently reserved codes (stock, Hide Users) via SecretCodeRegistry.
+        return AdbDataWipeUtils.isValidSecretCode(getPrefContext(), code);
     }
 
     private void showEnableConfirmDialog() {
