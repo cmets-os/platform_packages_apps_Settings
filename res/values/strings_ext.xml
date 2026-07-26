@@ -259,6 +259,7 @@ Duress PIN works the same way duress password does."</string>
     <string name="integrity_spoof_status_summary">Keybox: %1$s\nAny app PI spoof: %2$s\nAny app telephony spoof: %3$s\nLast apply: %4$s\n\nAOSP software default is for resign plumbing/lab only. It does not promise DEVICE, STRONG, or Google Pay NFC. Hardware keyboxes are Settings-imported; check CRL at android.googleapis.com/attestation/status.</string>
     <string name="integrity_spoof_keybox_present">present</string>
     <string name="integrity_spoof_keybox_default_soft">present (ROM default AOSP software)</string>
+    <string name="integrity_spoof_keybox_default_soft_ecdsa_expired">present (ROM default AOSP software; ECDSA signing cert expired — resign may use RSA fallback; import a hardware keybox for DEVICE/STRONG lab)</string>
     <string name="integrity_spoof_keybox_status_imported">present (user-imported)</string>
     <string name="integrity_spoof_keybox_missing">missing</string>
     <string name="integrity_spoof_yes">yes</string>

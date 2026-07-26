@@ -132,7 +132,12 @@ public class IntegritySpoofSettings extends SettingsPreferenceFragment
         if (keyboxSource == null) {
             keyboxStatus = ctx.getString(R.string.integrity_spoof_keybox_missing);
         } else if (IntegritySpoofStore.KEYBOX_SOURCE_DEFAULT_AOSP_SOFT.equals(keyboxSource)) {
-            keyboxStatus = ctx.getString(R.string.integrity_spoof_keybox_default_soft);
+            if (IntegritySpoofStore.isEcdsaSigningCertExpired()) {
+                keyboxStatus = ctx.getString(
+                        R.string.integrity_spoof_keybox_default_soft_ecdsa_expired);
+            } else {
+                keyboxStatus = ctx.getString(R.string.integrity_spoof_keybox_default_soft);
+            }
         } else if (IntegritySpoofStore.KEYBOX_SOURCE_IMPORTED.equals(keyboxSource)) {
             keyboxStatus = ctx.getString(R.string.integrity_spoof_keybox_status_imported);
         } else {
