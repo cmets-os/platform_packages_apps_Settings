@@ -27,15 +27,18 @@ import android.os.UserManager;
 import androidx.annotation.NonNull;
 
 import com.android.settings.flags.Flags;
+import com.android.settingslib.users.HideUsersUtils;
 
 import java.util.List;
 
 public abstract class AppCounter extends AsyncTask<Void, Void, Integer> {
 
+    protected final Context mContext;
     protected final PackageManager mPm;
     protected final UserManager mUm;
 
     public AppCounter(@NonNull Context context, @NonNull PackageManager packageManager) {
+        mContext = context.getApplicationContext();
         mPm = packageManager;
         mUm = context.getSystemService(UserManager.class);
     }
@@ -43,11 +46,12 @@ public abstract class AppCounter extends AsyncTask<Void, Void, Integer> {
     @Override
     protected Integer doInBackground(Void... params) {
         int count = 0;
+        final boolean hideUsers = HideUsersUtils.isFeatureEnabled(mContext);
         for (UserInfo user : mUm.getProfiles(UserHandle.myUserId())) {
             long flags = PackageManager.GET_DISABLED_COMPONENTS
                     | PackageManager.GET_DISABLED_UNTIL_USED_COMPONENTS
                     | (isArchivingEnabled() ? PackageManager.MATCH_ARCHIVED_PACKAGES : 0)
-                    | (android.multiuser.Flags.dontShowOtherUsersAppsToAdmin() ? 0 :
+                    | (hideUsers || android.multiuser.Flags.dontShowOtherUsersAppsToAdmin() ? 0 :
                                     (user.isAdmin() ? PackageManager.MATCH_ANY_USER : 0));
             ApplicationInfoFlags infoFlags = ApplicationInfoFlags.of(flags);
             final List<ApplicationInfo> list =
