@@ -8206,12 +8206,12 @@
 
     <!-- Shared encrypted storage toggle title [CHAR LIMIT=40] -->
     <string name="shared_encrypted_storage_title">Shared storage</string>
-    <!-- Shared encrypted storage toggle summary [CHAR LIMIT=NONE] -->
-    <string name="shared_encrypted_storage_summary">Encrypted folder visible to this profile as Shared; same data for every profile that enables it</string>
-    <!-- Shared encrypted storage owner page summary [CHAR LIMIT=100] -->
-    <string name="shared_encrypted_storage_settings_summary">Manage the encrypted Shared folder across profiles</string>
+    <!-- Shared encrypted storage toggle summary for secondary / Private Space [CHAR LIMIT=NONE] -->
+    <string name="shared_encrypted_storage_summary">Same Shared folder for every profile that enables it. Independent of the owner switch.</string>
+    <!-- Shared encrypted storage owner page summary [CHAR LIMIT=NONE] -->
+    <string name="shared_encrypted_storage_settings_summary">Show Shared in the owner profile, check unlock status, or erase Shared for every profile. Other profiles use their own switches.</string>
     <!-- Shared encrypted storage enable for owner [CHAR LIMIT=40] -->
-    <string name="shared_encrypted_storage_enable_title">Enable for this device</string>
+    <string name="shared_encrypted_storage_enable_title">Show Shared in owner profile</string>
     <!-- Shared encrypted storage status title [CHAR LIMIT=40] -->
     <string name="shared_encrypted_storage_status_title">Status</string>
     <!-- Shared encrypted storage status: unlocked [CHAR LIMIT=60] -->
