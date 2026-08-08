@@ -152,8 +152,8 @@ public class WifiHotspotSpeedViewModelTest {
 
         verify(mSpeedInfoMapData).setValue(mViewModel.mSpeedInfoMap);
         assertThat(mViewModel.mSpeedInfoMap.get(SPEED_2GHZ_6GHZ).mIsVisible).isTrue();
-        // The single 6G option is disabled when dual band is shown
-        assertThat(mViewModel.mSpeedInfoMap.get(SPEED_6GHZ).mIsVisible).isFalse();
+        // Single 6 GHz stays selectable alongside dual 2.4+6.
+        assertThat(mViewModel.mSpeedInfoMap.get(SPEED_6GHZ).mIsVisible).isTrue();
     }
 
     @Test
@@ -256,8 +256,9 @@ public class WifiHotspotSpeedViewModelTest {
         mViewModel.on5gAvailableChanged(true);
 
         verify(mSpeedInfoMapData).setValue(mViewModel.mSpeedInfoMap);
-        assertThat(mViewModel.mSpeedInfoMap.get(SPEED_2GHZ).mIsVisible).isFalse();
-        assertThat(mViewModel.mSpeedInfoMap.get(SPEED_5GHZ).mIsVisible).isFalse();
+        // Dual is offered without hiding single 2.4 / 5 GHz choices.
+        assertThat(mViewModel.mSpeedInfoMap.get(SPEED_2GHZ).mIsVisible).isTrue();
+        assertThat(mViewModel.mSpeedInfoMap.get(SPEED_5GHZ).mIsVisible).isTrue();
         assertThat(mViewModel.mSpeedInfoMap.get(SPEED_2GHZ_5GHZ).mIsVisible).isTrue();
     }
 

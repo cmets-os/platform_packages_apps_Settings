@@ -93,8 +93,10 @@ public class WifiHotspotSpeedViewModel extends AndroidViewModel {
                 && available
                 && Flags.enable2And6GhzHotspotSpeed();
         log("on6gAvailableChanged(), showDualBand:" + showDualBand);
+        // Keep single 6 GHz selectable even when dual 2.4+6 is offered (bridged SoftAP
+        // often degrades to 2.4-only; single high-band is needed to test/recover).
         mSpeedInfo2g6g.mIsVisible = showDualBand;
-        mSpeedInfo6g.mIsVisible = !showDualBand;
+        mSpeedInfo6g.mIsVisible = available;
         updateSpeedInfoMapData();
     }
 
@@ -106,9 +108,10 @@ public class WifiHotspotSpeedViewModel extends AndroidViewModel {
 
         boolean showDualBand = mWifiHotspotRepository.isDualBand() && available;
         log("on5gAvailableChanged(), showDualBand:" + showDualBand);
+        // Offer dual and single 2.4/5 together — do not hide single bands when dual is available.
         mSpeedInfo2g5g.mIsVisible = showDualBand;
-        mSpeedInfo2g.mIsVisible = !showDualBand;
-        mSpeedInfo5g.mIsVisible = !showDualBand;
+        mSpeedInfo2g.mIsVisible = true;
+        mSpeedInfo5g.mIsVisible = available;
         updateSpeedInfoMapData();
     }
 
