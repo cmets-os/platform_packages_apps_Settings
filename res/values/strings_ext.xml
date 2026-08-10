@@ -44,6 +44,13 @@
     <string name="screenshot_timestamp_exif_title">Save screenshot timestamp to EXIF</string>
     <string name="screenshot_timestamp_exif_summary">Enables adding a timestamp to screenshot EXIF metadata</string>
 
+    <string name="screenshot_save_location_title">Screenshot save location</string>
+    <string name="screenshot_save_location_summary">Choose Default or Shared for screenshots in this profile</string>
+    <string name="screenshot_save_location_default">Default</string>
+    <string name="screenshot_save_location_shared">Shared</string>
+    <string name="screenshot_save_location_shared_disabled_summary">Turn on Shared storage for this profile first</string>
+    <string name="screenshot_save_location_footer">Default saves to Pictures/Screenshots. Shared saves to Shared/Screenshots when Shared storage is enabled and unlocked for this profile.</string>
+
     <string name="pref_gnss_supl_title">Secure User Plane Location (SUPL)</string>
     <string name="pref_gnss_supl_footer">A-GNSS (assisted satellite geolocation) based on nearby cell towers.</string>
 

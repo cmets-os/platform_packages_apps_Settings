@@ -88,6 +88,13 @@
             settings:controller="com.android.settings.privatespace.users.PsSharedEncryptedStoragePrefController"
             settings:searchable="false" />
 
+        <Preference
+            android:key="private_space_screenshot_save_location"
+            android:title="@string/screenshot_save_location_title"
+            android:summary="@string/screenshot_save_location_summary"
+            settings:controller="com.android.settings.privatespace.users.PsScreenshotSaveLocationPrefController"
+            settings:searchable="false" />
+
         <SwitchPreferenceCompat
             android:key="private_space_disallow_delayed_locking"
             android:title="@string/ps_disallow_delayed_locking_title"

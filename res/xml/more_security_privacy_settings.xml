@@ -110,6 +110,13 @@
             android:summary="@string/screenshot_timestamp_exif_summary"
             settings:boolSettingField="android.ext.settings.ExtSettings SCREENSHOT_TIMESTAMP_EXIF"/>
 
+        <Preference
+            android:key="privacy_screenshot_save_location"
+            android:title="@string/screenshot_save_location_title"
+            android:summary="@string/screenshot_save_location_summary"
+            settings:controller=
+                "com.android.settings.privacy.ScreenshotSaveLocationPrefController"/>
+
         <!-- Allow software fallback for camera extensions -->
         <SwitchPreferenceCompat
             android:key="privacy_camera_extensions_fallback"
