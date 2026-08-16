@@ -277,18 +277,16 @@ public class WifiHotspotRepository {
     }
 
     /**
-     * Get the intended speed type of a SoftApConfiguration, taking into account the currently
-     * available channels and dual band capabilities.
-     *
-     * Single-band configurations may be upgraded to DBS by the framework if available.
-     * (see config_wifiSoftapUpgradeTetheredTo2g5gBridgedIfBandsAreSubset).
+     * Speed type of the stored SoftApConfiguration. Dual-band hardware does not upgrade
+     * a single-AP config to 2.4+5 / 2.4+6 in the UI.
      */
     private int getSpeedTypeOfConfiguration(@NonNull SoftApConfiguration config) {
         boolean specifies2ghz = false;
         boolean specifies5ghz = false;
         boolean specifies6ghz = false;
         SparseIntArray configuredChannels = config.getChannels();
-        for (int i = 0; i < configuredChannels.size(); i++) {
+        int entryCount = configuredChannels.size();
+        for (int i = 0; i < entryCount; i++) {
             int band = configuredChannels.keyAt(i);
             if ((band & BAND_2GHZ) != 0) specifies2ghz = true;
             if ((band & BAND_5GHZ) != 0) specifies5ghz = true;
@@ -300,23 +298,28 @@ public class WifiHotspotRepository {
                 + ", specifies6ghz=" + specifies6ghz
         );
 
-        // Check configured bands in order of compatibility.
+        if (entryCount >= 2) {
+            if (specifies6ghz && is6gAvailable() && Flags.enable2And6GhzHotspotSpeed()) {
+                return SPEED_2GHZ_6GHZ;
+            }
+            if (specifies5ghz && is5gAvailable()) {
+                return SPEED_2GHZ_5GHZ;
+            }
+            if (specifies2ghz) {
+                return SPEED_2GHZ;
+            }
+            return SPEED_UNKNOWN;
+        }
+
         if (specifies6ghz && is6gAvailable()) {
-            if (isDualBand() && Flags.enable2And6GhzHotspotSpeed()) return SPEED_2GHZ_6GHZ;
             return SPEED_6GHZ;
         }
-
         if (specifies5ghz && is5gAvailable()) {
-            if (isDualBand()) return SPEED_2GHZ_5GHZ;
             return SPEED_5GHZ;
         }
-
-        if (specifies2ghz) { // Assume 2 GHz is always available
-            // Upgrade to 2 + 5 GHz if available
-            if (isDualBand() && is5gAvailable()) return SPEED_2GHZ_5GHZ;
+        if (specifies2ghz) {
             return SPEED_2GHZ;
         }
-
         return SPEED_UNKNOWN;
     }
 

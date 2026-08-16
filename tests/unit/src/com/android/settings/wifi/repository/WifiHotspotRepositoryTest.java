@@ -444,7 +444,7 @@ public class WifiHotspotRepositoryTest {
     }
 
     @Test
-    public void updateSpeedType_dualBand2gAnd5g_get2gAnd5gSpeedType() {
+    public void updateSpeedType_singleAp5gPreferred_get5gSpeedTypeEvenIfDualCapable() {
         mRepository.mIsDualBand = true;
         SoftApConfiguration config = new SoftApConfiguration.Builder()
                 .setBand(WIFI_5GHZ_BAND_PREFERRED).build();
@@ -452,7 +452,31 @@ public class WifiHotspotRepositoryTest {
 
         mRepository.updateSpeedType();
 
+        verify(mSpeedType).setValue(SPEED_5GHZ);
+    }
+
+    @Test
+    public void updateSpeedType_bridged2gAnd5g_get2gAnd5gSpeedType() {
+        mRepository.mIsDualBand = true;
+        SoftApConfiguration config = new SoftApConfiguration.Builder()
+                .setBands(new int[]{BAND_2GHZ, BAND_2GHZ | BAND_5GHZ}).build();
+        when(mWifiManager.getSoftApConfiguration()).thenReturn(config);
+
+        mRepository.updateSpeedType();
+
         verify(mSpeedType).setValue(SPEED_2GHZ_5GHZ);
+    }
+
+    @Test
+    public void updateSpeedType_2gOnlyAndDualCapable_get2gSpeedType() {
+        mRepository.mIsDualBand = true;
+        SoftApConfiguration config = new SoftApConfiguration.Builder()
+                .setBand(BAND_2GHZ).build();
+        when(mWifiManager.getSoftApConfiguration()).thenReturn(config);
+
+        mRepository.updateSpeedType();
+
+        verify(mSpeedType).setValue(SPEED_2GHZ);
     }
 
     @Test
@@ -470,7 +494,7 @@ public class WifiHotspotRepositoryTest {
 
     @Test
     @EnableFlags(FLAG_ENABLE_2_AND_6_GHZ_HOTSPOT_SPEED)
-    public void updateSpeedType_single6gConfig_upgradedTo2g6gDbsWhenFlagEnabled() {
+    public void updateSpeedType_single6gConfig_get6gSpeedTypeWhenFlagEnabled() {
         mRepository.mIsDualBand = true;
         SoftApConfiguration config = new SoftApConfiguration.Builder()
                 .setBand(WIFI_6GHZ_BAND_PREFERRED).build();
@@ -478,7 +502,7 @@ public class WifiHotspotRepositoryTest {
 
         mRepository.updateSpeedType();
 
-        verify(mSpeedType).setValue(SPEED_2GHZ_6GHZ);
+        verify(mSpeedType).setValue(SPEED_6GHZ);
     }
 
     @Test
@@ -549,7 +573,7 @@ public class WifiHotspotRepositoryTest {
     }
 
     @Test
-    public void updateSpeedType_only5gChannelAndDualBand_get2g5gSpeedType() {
+    public void updateSpeedType_only5gChannelAndDualBand_get5gSpeedType() {
         mRepository.mIsDualBand = true;
         SoftApConfiguration config = new SoftApConfiguration.Builder()
                 .setBand(BAND_5GHZ).build();
@@ -557,8 +581,7 @@ public class WifiHotspotRepositoryTest {
 
         mRepository.updateSpeedType();
 
-        // When dual band is supported, a 5GHz-only config is upgraded to 2.4+5GHz.
-        verify(mSpeedType).setValue(SPEED_2GHZ_5GHZ);
+        verify(mSpeedType).setValue(SPEED_5GHZ);
     }
 
     @Test
