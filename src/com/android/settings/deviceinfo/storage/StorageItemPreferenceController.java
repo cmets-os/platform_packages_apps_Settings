@@ -60,6 +60,7 @@ import com.android.settingslib.core.AbstractPreferenceController;
 import com.android.settingslib.core.instrumentation.MetricsFeatureProvider;
 import com.android.settingslib.deviceinfo.StorageMeasurement;
 import com.android.settingslib.deviceinfo.StorageVolumeProvider;
+import com.android.settingslib.users.HideUsersUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -501,6 +502,10 @@ public class StorageItemPreferenceController extends AbstractPreferenceControlle
         // belonging to system.
         long attributedSize = 0;
         for (int i = 0; i < result.size(); i++) {
+            final int id = result.keyAt(i);
+            if (HideUsersUtils.isUiHidden(mUserManager.getUserInfo(id))) {
+                continue;
+            }
             final StorageAsyncLoader.StorageResult otherData = result.valueAt(i);
             attributedSize +=
                     otherData.gamesSize

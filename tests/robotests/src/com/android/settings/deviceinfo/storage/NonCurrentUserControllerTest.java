@@ -260,6 +260,43 @@ public class NonCurrentUserControllerTest {
     }
 
     @Test
+    public void getNonCurrentUserControllers_uiHiddenUser_omitted() {
+        final ArrayList<UserInfo> userInfos = new ArrayList<>();
+        final UserInfo hiddenUser = new UserInfo();
+        hiddenUser.id = 10;
+        hiddenUser.flags = UserInfo.FLAG_FULL | UserInfo.FLAG_UI_HIDDEN;
+        userInfos.add(mPrimaryUser);
+        userInfos.add(hiddenUser);
+        when(mUserManager.getUsers()).thenReturn(userInfos);
+
+        final List<NonCurrentUserController> controllers =
+                NonCurrentUserController.getNonCurrentUserControllers(mContext, mUserManager);
+
+        assertThat(controllers).hasSize(0);
+    }
+
+    @Test
+    public void getNonCurrentUserControllers_visibleAndHiddenUsers_onlyVisibleAdded() {
+        final ArrayList<UserInfo> userInfos = new ArrayList<>();
+        final UserInfo visibleUser = new UserInfo();
+        visibleUser.id = 10;
+        visibleUser.flags = UserInfo.FLAG_FULL;
+        final UserInfo hiddenUser = new UserInfo();
+        hiddenUser.id = 11;
+        hiddenUser.flags = UserInfo.FLAG_FULL | UserInfo.FLAG_UI_HIDDEN;
+        userInfos.add(mPrimaryUser);
+        userInfos.add(visibleUser);
+        userInfos.add(hiddenUser);
+        when(mUserManager.getUsers()).thenReturn(userInfos);
+
+        final List<NonCurrentUserController> controllers =
+                NonCurrentUserController.getNonCurrentUserControllers(mContext, mUserManager);
+
+        assertThat(controllers).hasSize(1);
+        assertThat(controllers.get(0).getUser().id).isEqualTo(visibleUser.id);
+    }
+
+    @Test
     public void getNonCurrentUserControllers_switchUsers() {
         final ArrayList<UserInfo> userInfo = new ArrayList<>();
         final UserInfo secondaryUser = spy(new UserInfo());

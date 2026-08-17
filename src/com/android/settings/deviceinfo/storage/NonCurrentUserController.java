@@ -32,6 +32,7 @@ import androidx.preference.PreferenceScreen;
 import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.deviceinfo.StorageItemPreference;
 import com.android.settingslib.core.AbstractPreferenceController;
+import com.android.settingslib.users.HideUsersUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +75,9 @@ public class NonCurrentUserController extends AbstractPreferenceController imple
         List<UserInfo> infos = userManager.getUsers();
         for (UserInfo info : infos) {
             if (info.id == currentUserId || !info.isFull()) {
+                continue;
+            }
+            if (HideUsersUtils.isUiHidden(info)) {
                 continue;
             }
             int[] profiles = userManager.getProfileIds(info.id, false /* enabledOnly */);

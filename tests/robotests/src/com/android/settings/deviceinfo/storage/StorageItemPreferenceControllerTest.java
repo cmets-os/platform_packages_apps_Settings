@@ -30,10 +30,13 @@ import static org.mockito.Mockito.when;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.UserInfo;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.UserHandle;
+import android.os.UserManager;
 import android.os.storage.VolumeInfo;
+import android.util.DataUnit;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
@@ -402,6 +405,48 @@ public class StorageItemPreferenceControllerTest {
         assertThat(mController.mTrashPreference.getSummary().toString()).isEqualTo("100 kB");
         assertThat(mController.mSystemPreference.getSummary().toString())
                 .isEqualTo("60 MB");
+    }
+
+    @Test
+    public void onLoadFinished_hiddenUserBytes_countedAsTemporaryFiles() {
+        final UserManager um = mock(UserManager.class);
+        when(mContext.getSystemService(eq(UserManager.class))).thenReturn(um);
+        final UserInfo owner = new UserInfo(0, "owner",
+                UserInfo.FLAG_PRIMARY | UserInfo.FLAG_FULL);
+        final UserInfo hidden = new UserInfo(10, "hidden",
+                UserInfo.FLAG_FULL | UserInfo.FLAG_UI_HIDDEN);
+        when(um.getUserInfo(0)).thenReturn(owner);
+        when(um.getUserInfo(10)).thenReturn(hidden);
+        mController = new StorageItemPreferenceController(mContext, mFragment, mVolume, mSvp,
+                ProfileSelectFragment.ProfileType.PERSONAL);
+        mPreferenceScreen = getPreferenceScreen();
+        mController.displayPreference(mPreferenceScreen);
+
+        mController.setUsedSize(MEGABYTE_IN_BYTES * 2000);
+        final StorageAsyncLoader.StorageResult current = new StorageAsyncLoader.StorageResult();
+        current.imagesSize = MEGABYTE_IN_BYTES * 50;
+        current.allAppsExceptGamesSize = MEGABYTE_IN_BYTES * 90;
+        final StorageAsyncLoader.StorageResult hiddenResult =
+                new StorageAsyncLoader.StorageResult();
+        hiddenResult.imagesSize = MEGABYTE_IN_BYTES * 200;
+        hiddenResult.allAppsExceptGamesSize = MEGABYTE_IN_BYTES * 300;
+        final SparseArray<StorageAsyncLoader.StorageResult> results = new SparseArray<>();
+        results.put(0, current);
+        results.put(10, hiddenResult);
+        mController.onLoadFinished(results, 0);
+
+        assertThat(mController.mImagesPreference.getSummary().toString()).isEqualTo("50 MB");
+        assertThat(mController.mAppsPreference.getSummary().toString()).isEqualTo("90 MB");
+        final long visibleAttributed = current.imagesSize + current.allAppsExceptGamesSize;
+        final long hiddenAttributed =
+                hiddenResult.imagesSize + hiddenResult.allAppsExceptGamesSize;
+        final long used = MEGABYTE_IN_BYTES * 2000;
+        final long expectedTemp = Math.max(DataUnit.GIBIBYTES.toBytes(1), used - visibleAttributed);
+        final long tempIfHiddenAttributed =
+                Math.max(DataUnit.GIBIBYTES.toBytes(1), used - visibleAttributed - hiddenAttributed);
+        assertThat(mController.mTemporaryFilesPreference.getStorageSize()).isEqualTo(expectedTemp);
+        assertThat(mController.mTemporaryFilesPreference.getStorageSize())
+                .isGreaterThan(tempIfHiddenAttributed);
     }
 
     @Test

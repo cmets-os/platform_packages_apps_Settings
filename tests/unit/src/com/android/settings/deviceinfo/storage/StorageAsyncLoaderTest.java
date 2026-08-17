@@ -161,6 +161,23 @@ public class StorageAsyncLoaderTest {
     }
 
     @Test
+    public void testUiHiddenUserStillReturned() throws Exception {
+        UserInfo hidden = new UserInfo();
+        hidden.id = SECONDARY_USER_ID;
+        hidden.flags = UserInfo.FLAG_FULL | UserInfo.FLAG_UI_HIDDEN;
+        mUsers.add(hidden);
+        when(mSource.getExternalStorageStats(anyString(), eq(UserHandle.SYSTEM)))
+                .thenReturn(new StorageStatsSource.ExternalStorageStats(9, 2, 3, 4, 0));
+        when(mSource.getExternalStorageStats(anyString(), eq(new UserHandle(SECONDARY_USER_ID))))
+                .thenReturn(new StorageStatsSource.ExternalStorageStats(10, 3, 3, 4, 0));
+
+        SparseArray<StorageAsyncLoader.StorageResult> result = mLoader.loadInBackground();
+
+        assertThat(result.size()).isEqualTo(2);
+        assertThat(result.get(SECONDARY_USER_ID)).isNotNull();
+    }
+
+    @Test
     public void testUpdatedSystemAppCodeSizeIsCounted() throws Exception {
         ApplicationInfo systemApp =
                 addPackage(PACKAGE_NAME_1, 100, 1, 10, ApplicationInfo.CATEGORY_UNDEFINED);

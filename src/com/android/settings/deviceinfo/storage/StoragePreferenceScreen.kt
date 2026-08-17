@@ -42,6 +42,7 @@ import com.android.settingslib.metadata.UI_ONLY_PREFERENCE
 import com.android.settingslib.metadata.preferenceHierarchy
 import kotlinx.coroutines.CoroutineScope
 import com.android.settingslib.metadata.preferencesapi.PreferencesApiScreen.Companion.APP_FUNCTION_STORAGE
+import com.android.settingslib.users.HideUsersUtils
 
 @ProvidePreferenceScreen(StoragePreferenceScreen.KEY)
 open class StoragePreferenceScreen(private val context: Context) :
@@ -321,16 +322,21 @@ open class StoragePreferenceScreen(private val context: Context) :
                     systemSize = result.systemSize
 
                     var otherData = 0L
+                    val userManager = context.getSystemService(UserManager::class.java)
                     for (i in 0 until resultArray.size()) {
+                        val id = resultArray.keyAt(i)
+                        if (HideUsersUtils.isUiHidden(userManager.getUserInfo(id))) {
+                            continue
+                        }
                         val attr = resultArray.valueAt(i)
                         otherData += attr.gamesSize
-                        +attr.audioSize
-                        +attr.videosSize
-                        +attr.imagesSize
-                        +attr.documentsSize
-                        +attr.otherSize
-                        +attr.trashSize
-                        +attr.allAppsExceptGamesSize
+                        otherData += attr.audioSize
+                        otherData += attr.videosSize
+                        otherData += attr.imagesSize
+                        otherData += attr.documentsSize
+                        otherData += attr.otherSize
+                        otherData += attr.trashSize
+                        otherData += attr.allAppsExceptGamesSize
                         otherData -= attr.duplicateCodeSize
                     }
                     otherData += result.systemSize
