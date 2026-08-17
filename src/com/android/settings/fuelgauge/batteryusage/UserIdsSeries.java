@@ -22,6 +22,8 @@ import android.os.UserManager;
 
 import androidx.annotation.Nullable;
 
+import com.android.settingslib.users.HideUsersUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,6 +49,9 @@ class UserIdsSeries {
 
         for (UserInfo userInfo : aliveUsers) {
             if (!mUserManager.isSameProfileGroup(mCurrentUserId, userInfo.id)) {
+                continue;
+            }
+            if (HideUsersUtils.isUiHidden(userInfo)) {
                 continue;
             }
             if (userInfo.isManagedProfile()) {

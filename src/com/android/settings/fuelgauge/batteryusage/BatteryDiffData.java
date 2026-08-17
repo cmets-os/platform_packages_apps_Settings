@@ -251,9 +251,19 @@ public class BatteryDiffData {
         final Set<String> othersCustomComponentNameSet =
                 featureProvider.getOthersCustomComponentNameSet();
         BatteryDiffEntry othersDiffEntry = null;
+        for (BatteryDiffEntry existing : systemEntries) {
+            if (BatteryDiffEntry.OTHERS_KEY.equals(existing.getKey())) {
+                othersDiffEntry = existing;
+                break;
+            }
+        }
+        final boolean othersAlreadyPresent = othersDiffEntry != null;
         final Iterator<BatteryDiffEntry> systemListIterator = systemEntries.iterator();
         while (systemListIterator.hasNext()) {
             final BatteryDiffEntry batteryDiffEntry = systemListIterator.next();
+            if (BatteryDiffEntry.OTHERS_KEY.equals(batteryDiffEntry.getKey())) {
+                continue;
+            }
             final int componentId = batteryDiffEntry.mComponentId;
             if (othersSystemComponentSet.contains(componentId)
                     || (componentId >= BatteryConsumer.FIRST_CUSTOM_POWER_COMPONENT_ID
@@ -272,7 +282,7 @@ public class BatteryDiffData {
                 systemListIterator.remove();
             }
         }
-        if (othersDiffEntry != null) {
+        if (othersDiffEntry != null && !othersAlreadyPresent) {
             systemEntries.add(othersDiffEntry);
         }
     }

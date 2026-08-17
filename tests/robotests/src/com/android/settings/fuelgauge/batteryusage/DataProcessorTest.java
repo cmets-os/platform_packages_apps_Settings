@@ -2540,12 +2540,14 @@ public final class DataProcessorTest {
                         .get(DataProcessor.SELECTED_INDEX_ALL)
                         .get(DataProcessor.SELECTED_INDEX_ALL);
         assertThat(resultDiffData.getScreenOnTime()).isEqualTo(0L);
+        final List<BatteryDiffEntry> appEntries = resultDiffData.getAppDiffEntryList();
+        assertThat(appEntries).hasSize(2);
         assertBatteryDiffEntry(
-                resultDiffData.getAppDiffEntryList().get(0),
+                appEntries.get(0),
                 currentUserId,
                 /* uid= */ 1L,
                 ConvertUtils.CONSUMER_TYPE_UID_BATTERY,
-                /* consumePercentage= */ 100.0,
+                /* consumePercentage= */ 25.0,
                 /* foregroundUsageConsumePower= */ 5,
                 /* foregroundServiceUsageConsumePower= */ 5,
                 /* backgroundUsageConsumePower= */ 5,
@@ -2554,6 +2556,18 @@ public final class DataProcessorTest {
                 /* foregroundServiceUsageTimeInMs= */ 10,
                 /* backgroundUsageTimeInMs= */ 10,
                 /* screenOnTimeInMs= */ 0);
+        assertThat(appEntries.get(0).getPackageName()).isEqualTo("package1");
+        assertThat(appEntries.get(1).getKey()).isEqualTo(BatteryDiffEntry.SYSTEM_APPS_KEY);
+        assertThat(appEntries.get(1).mConsumePower).isEqualTo(60.0);
+        assertThat(appEntries.get(1).getPercentage()).isEqualTo(75.0);
+        for (BatteryDiffEntry appEntry : appEntries) {
+            if (!BatteryDiffEntry.SYSTEM_APPS_KEY.equals(appEntry.getKey())) {
+                assertThat(appEntry.mUserId).isEqualTo(currentUserId);
+                assertThat(appEntry.mUid).isEqualTo(1L);
+            }
+            assertThat(appEntry.mUserId).isNotEqualTo(currentUserId + 1);
+            assertThat(appEntry.mUserId).isNotEqualTo(currentUserId + 2);
+        }
         assertThat(resultDiffData.getSystemDiffEntryList()).isEmpty();
         assertThat(resultMap.get(0).get(0)).isNotNull();
         assertThat(resultMap.get(0).get(DataProcessor.SELECTED_INDEX_ALL)).isNotNull();
@@ -3106,6 +3120,48 @@ public final class DataProcessorTest {
                 /* foregroundServiceUsageTimeInMs= */ 10,
                 /* backgroundUsageTimeInMs= */ 10,
                 /* screenOnTimeInMs= */ 0);
+    }
+
+    @Test
+    public void generateBatteryDiffData_hiddenUserConsumer_foldsIntoOthers() {
+        final int hiddenUserId = mContext.getUserId() + 1;
+        final UserInfo hiddenUser =
+                new UserInfo(
+                        hiddenUserId, "hidden", UserInfo.FLAG_FULL | UserInfo.FLAG_UI_HIDDEN);
+        doReturn(false).when(mUserIdsSeries).isFromOtherUsers(hiddenUserId);
+        doReturn(hiddenUser).when(mUserManager).getUserInfo(hiddenUserId);
+        final BatteryHistEntry hiddenUserEntry =
+                createBatteryHistEntry(
+                        /* packageName= */ null,
+                        "hidden-user",
+                        /* consumePower= */ 12.0,
+                        /* foregroundUsageConsumePower= */ 12,
+                        /* foregroundServiceUsageConsumePower= */ 0,
+                        /* backgroundUsageConsumePower= */ 0,
+                        /* cachedUsageConsumePower= */ 0,
+                        /* uid= */ 0L,
+                        hiddenUserId,
+                        ConvertUtils.CONSUMER_TYPE_USER_BATTERY,
+                        /* foregroundUsageTimeInMs= */ 8L,
+                        /* foregroundServiceUsageTimeInMs= */ 0L,
+                        /* backgroundUsageTimeInMs= */ 0L,
+                        /* isHidden= */ false);
+
+        final BatteryDiffData batteryDiffData =
+                DataProcessor.generateBatteryDiffData(
+                        mContext,
+                        mUserIdsSeries,
+                        System.currentTimeMillis(),
+                        List.of(hiddenUserEntry),
+                        /* systemAppsPackageNames= */ Set.of(),
+                        /* systemAppsUids= */ Set.of());
+
+        assertThat(batteryDiffData.getAppDiffEntryList()).isEmpty();
+        assertThat(batteryDiffData.getSystemDiffEntryList()).hasSize(1);
+        final BatteryDiffEntry others = batteryDiffData.getSystemDiffEntryList().get(0);
+        assertThat(others.getKey()).isEqualTo(BatteryDiffEntry.OTHERS_KEY);
+        assertThat(others.mConsumePower).isEqualTo(12.0);
+        assertThat(others.mConsumerType).isEqualTo(ConvertUtils.CONSUMER_TYPE_SYSTEM_BATTERY);
     }
 
     @Test

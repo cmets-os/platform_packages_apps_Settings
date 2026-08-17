@@ -21,6 +21,7 @@ import static android.app.ActivityManager.PROCESS_STATE_TOP;
 import static com.android.settings.fuelgauge.batteryusage.ConvertUtils.getEffectivePackageName;
 import static com.android.settings.fuelgauge.batteryusage.ConvertUtils.isSystemConsumer;
 import static com.android.settings.fuelgauge.batteryusage.ConvertUtils.isUidConsumer;
+import static com.android.settings.fuelgauge.batteryusage.ConvertUtils.isUserConsumer;
 import static com.android.settingslib.fuelgauge.BatteryStatus.BATTERY_LEVEL_UNKNOWN;
 
 import android.app.ActivityManager;
@@ -59,6 +60,7 @@ import com.android.settings.fuelgauge.BatteryUtils;
 import com.android.settings.overlay.FeatureFactory;
 import com.android.settingslib.fuelgauge.BatteryStatus;
 import com.android.settingslib.spaprivileged.model.app.AppListRepositoryUtil;
+import com.android.settingslib.users.HideUsersUtils;
 
 import com.google.common.base.Preconditions;
 
@@ -662,38 +664,35 @@ public final class DataProcessor {
                     systemAppsUids,
                     /* isAccumulated= */ false);
         }
+        final UserManager userManager = context.getSystemService(UserManager.class);
         for (BatteryHistEntry entry : batteryHistEntryList) {
-            final boolean isFromOtherUsers =
-                    isConsumedFromOtherUsers(userIdsSeries, entry);
-            // Not show other users' battery usage data.
-            if (isFromOtherUsers) {
-                continue;
+            final BatteryDiffEntry currentBatteryDiffEntry =
+                    new BatteryDiffEntry(
+                            context,
+                            entry.mUid,
+                            entry.mUserId,
+                            entry.getKey(),
+                            entry.mIsHidden
+                                    || isUidConsumedFromOtherUsers(userIdsSeries, entry),
+                            entry.mDrainType,
+                            entry.mPackageName,
+                            entry.mAppLabel,
+                            entry.mConsumerType,
+                            entry.mForegroundUsageTimeInMs,
+                            entry.mForegroundServiceUsageTimeInMs,
+                            entry.mBackgroundUsageTimeInMs,
+                            /* screenOnTimeInMs= */ 0,
+                            entry.mConsumePower,
+                            entry.mForegroundUsageConsumePower,
+                            entry.mForegroundServiceUsageConsumePower,
+                            entry.mBackgroundUsageConsumePower,
+                            entry.mCachedUsageConsumePower);
+            if (isUserConsumedFromOtherOrHiddenUsers(userIdsSeries, entry, userManager)) {
+                foldIntoOthers(context, systemEntries, currentBatteryDiffEntry);
+            } else if (currentBatteryDiffEntry.isSystemEntry()) {
+                systemEntries.add(currentBatteryDiffEntry);
             } else {
-                final BatteryDiffEntry currentBatteryDiffEntry =
-                        new BatteryDiffEntry(
-                                context,
-                                entry.mUid,
-                                entry.mUserId,
-                                entry.getKey(),
-                                entry.mIsHidden,
-                                entry.mDrainType,
-                                entry.mPackageName,
-                                entry.mAppLabel,
-                                entry.mConsumerType,
-                                entry.mForegroundUsageTimeInMs,
-                                entry.mForegroundServiceUsageTimeInMs,
-                                entry.mBackgroundUsageTimeInMs,
-                                /* screenOnTimeInMs= */ 0,
-                                entry.mConsumePower,
-                                entry.mForegroundUsageConsumePower,
-                                entry.mForegroundServiceUsageConsumePower,
-                                entry.mBackgroundUsageConsumePower,
-                                entry.mCachedUsageConsumePower);
-                if (currentBatteryDiffEntry.isSystemEntry()) {
-                    systemEntries.add(currentBatteryDiffEntry);
-                } else {
-                    appEntries.add(currentBatteryDiffEntry);
-                }
+                appEntries.add(currentBatteryDiffEntry);
             }
         }
         return new BatteryDiffData(
@@ -1518,6 +1517,7 @@ public final class DataProcessor {
 
         final List<BatteryDiffEntry> appEntries = new ArrayList<>();
         final List<BatteryDiffEntry> systemEntries = new ArrayList<>();
+        final UserManager userManager = context.getSystemService(UserManager.class);
 
         // Collects all keys in these three time slot records as all populations.
         final Set<String> allBatteryHistEntryKeys = new ArraySet<>();
@@ -1561,13 +1561,6 @@ public final class DataProcessor {
                 }
             }
             if (selectedBatteryEntry == null) {
-                continue;
-            }
-
-            // Not show other users' battery usage data.
-            final boolean isFromOtherUsers =
-                    isConsumedFromOtherUsers(userIdsSeries, selectedBatteryEntry);
-            if (isFromOtherUsers) {
                 continue;
             }
 
@@ -1694,7 +1687,9 @@ public final class DataProcessor {
                             selectedBatteryEntry.mUid,
                             selectedBatteryEntry.mUserId,
                             selectedBatteryEntry.getKey(),
-                            selectedBatteryEntry.mIsHidden,
+                            selectedBatteryEntry.mIsHidden
+                                    || isUidConsumedFromOtherUsers(
+                                            userIdsSeries, selectedBatteryEntry),
                             selectedBatteryEntry.mDrainType,
                             selectedBatteryEntry.mPackageName,
                             selectedBatteryEntry.mAppLabel,
@@ -1708,7 +1703,10 @@ public final class DataProcessor {
                             foregroundServiceUsageConsumePower,
                             backgroundUsageConsumePower,
                             cachedUsageConsumePower);
-            if (currentBatteryDiffEntry.isSystemEntry()) {
+            if (isUserConsumedFromOtherOrHiddenUsers(
+                    userIdsSeries, selectedBatteryEntry, userManager)) {
+                foldIntoOthers(context, systemEntries, currentBatteryDiffEntry);
+            } else if (currentBatteryDiffEntry.isSystemEntry()) {
                 systemEntries.add(currentBatteryDiffEntry);
             } else {
                 if (!dataErrorTypes.isEmpty()) {
@@ -1776,11 +1774,56 @@ public final class DataProcessor {
         return totalScreenOnTime;
     }
 
-    private static boolean isConsumedFromOtherUsers(
-            final UserIdsSeries userIdsSeries,
-            final BatteryHistEntry batteryHistEntry) {
+    private static boolean isUidConsumedFromOtherUsers(
+            final UserIdsSeries userIdsSeries, final BatteryHistEntry batteryHistEntry) {
         return isUidConsumer(batteryHistEntry.mConsumerType)
                 && userIdsSeries.isFromOtherUsers(batteryHistEntry.mUserId);
+    }
+
+    private static boolean isUserConsumedFromOtherOrHiddenUsers(
+            final UserIdsSeries userIdsSeries,
+            final BatteryHistEntry batteryHistEntry,
+            final UserManager userManager) {
+        if (!isUserConsumer(batteryHistEntry.mConsumerType)) {
+            return false;
+        }
+        if (userIdsSeries.isFromOtherUsers(batteryHistEntry.mUserId)) {
+            return true;
+        }
+        return HideUsersUtils.isUiHidden(
+                userManager != null
+                        ? userManager.getUserInfo((int) batteryHistEntry.mUserId)
+                        : null);
+    }
+
+    private static void foldIntoOthers(
+            final Context context,
+            final List<BatteryDiffEntry> systemEntries,
+            final BatteryDiffEntry source) {
+        BatteryDiffEntry others = null;
+        for (BatteryDiffEntry entry : systemEntries) {
+            if (BatteryDiffEntry.OTHERS_KEY.equals(entry.getKey())) {
+                others = entry;
+                break;
+            }
+        }
+        if (others == null) {
+            others =
+                    new BatteryDiffEntry(
+                            context,
+                            BatteryDiffEntry.OTHERS_KEY,
+                            BatteryDiffEntry.OTHERS_KEY,
+                            ConvertUtils.CONSUMER_TYPE_SYSTEM_BATTERY);
+            systemEntries.add(others);
+        }
+        others.mConsumePower += source.mConsumePower;
+        others.mForegroundUsageTimeInMs += source.mForegroundUsageTimeInMs;
+        others.mForegroundServiceUsageTimeInMs += source.mForegroundServiceUsageTimeInMs;
+        others.mBackgroundUsageTimeInMs += source.mBackgroundUsageTimeInMs;
+        others.mForegroundUsageConsumePower += source.mForegroundUsageConsumePower;
+        others.mForegroundServiceUsageConsumePower += source.mForegroundServiceUsageConsumePower;
+        others.mBackgroundUsageConsumePower += source.mBackgroundUsageConsumePower;
+        others.mCachedUsageConsumePower += source.mCachedUsageConsumePower;
     }
 
     @Nullable
