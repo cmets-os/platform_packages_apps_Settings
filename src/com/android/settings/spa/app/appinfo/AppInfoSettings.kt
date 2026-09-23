@@ -212,6 +212,7 @@ private fun AppInfoSettings(packageInfoPresenter: PackageInfoPresenter) {
             com.android.settings.applications.AppManagePlayIntegrityApiPreference(app)
             com.android.settings.applications.AppManageSpoofPlayIntegrityPreference(app)
             com.android.settings.applications.AppManageSpoofTelephonyRegionPreference(app)
+            com.android.settings.applications.AppClipboardReadPreference(app)
             if (android.companion.virtualdevice.flags.Flags.computerControlAccess()) {
                 ComputerControlAutomationAppListProvider.InfoPageEntryItem(app)
             }

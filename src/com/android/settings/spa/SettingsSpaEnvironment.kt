@@ -158,6 +158,7 @@ open class SettingsSpaEnvironment(context: Context) : SpaEnvironment(context) {
                     com.android.settings.applications.AswAdapterSpoofPlayIntegrity.makeAppListPageProvider(),
                     com.android.settings.applications.AswAdapterSpoofTelephonyRegion.makeAppListPageProvider(),
                     com.android.settings.applications.AswAdapterUseExecSpawning.makeAppListPageProvider(),
+                    com.android.settings.applications.AswAdapterClipboardRead.makeAppListPageProvider(),
                     com.android.settings.network.telephony.carriersettingsoverride.CarrierSettingsOverridesProvider,
                 )
             )
